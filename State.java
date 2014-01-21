@@ -1,5 +1,6 @@
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.Set;
 
 public class State {
@@ -83,6 +84,16 @@ public class State {
 
     public static LinkedList<Integer> getStack() {
         return stack;
+    }
+
+    public static void print() {
+        System.out.println("\nOpponent:");
+        System.out.println(oppWall);
+        System.out.println("\nScore: " + oppWall.calcScore());
+        System.out.println("\nMy Wall:");
+        System.out.println(myWall);
+        System.out.println("\nScore: " + myWall.calcScore());
+        System.out.format("\np: **  d: %d\n", currDiscard);
     }
 
 }

@@ -5,40 +5,6 @@ import java.util.Set;
 
 class Player {
 
-    Set<Integer> unknownBricks = new HashSet<Integer>();
-    LinkedList<Integer> brickStack = new LinkedList<Integer>();
-
-    public static void init() {
-
-    }
-
-    public static void updateStack(int[][] wall,
-                                   int[][] owall,
-                                   int discardBrick) {
-
-    }
-
-    /**
-     * Pretty print a game wall
-     */
-    public static void printWall(int[][] s) {
-        System.out.format("  ||");
-        for (int i = 0; i < s[0].length; ++i) System.out.format(" %2d |", i);
-        System.out.format("|\n" + new String(new char[4 + 5 * s[0].length + 1]).replace("\0", "=") + "\n");
-        for (int i = s.length - 1; i > 0; --i) {
-            System.out.format("%c ||", 'A' + i);
-            for (int j = 0; j < s[i].length; ++j) System.out.format(" %2d |", s[i][j]);
-            System.out.format("|\n");
-
-            System.out.format("--||");
-            for (int j = 0; j < s[i].length; ++j) System.out.format("----|");
-            System.out.format("|\n");
-        }
-        System.out.format("%c ||", 'A');
-        for (int j = 0; j < s[0].length; ++j) System.out.format(" %2d |", s[0][j]);
-        System.out.format("|\n" + new String(new char[4 + 5 * s[0].length + 1]).replace("\0", "=") + "\n");
-    }
-
     /**
      * Choose the known brick in the discard or a unknown brick in the pile.
      * Input:
@@ -49,26 +15,15 @@ class Player {
      * 'd': Accept the known brick in the discard.
      * 'p': Reject the known brick in the discard and draw from the pile.
      */
-    public static String chooseMove(int[][] wall,
-                                    int[][] owall,
-                                    int discardBrick) {
-        System.out.println("\nOpponent:");
-        printWall(owall);
-        System.out.println("\nMy Wall:");
-        printWall(wall);
-
-        System.out.format("\np: **  d: %d\n", discardBrick);
-        System.out.print("Pile or Discard: ");
-
-        Scanner sc = new Scanner(System.in);
-        return sc.nextLine();
+    public static String chooseMove() {
+        return "d";
     }
 
     /**
      * Convert numeric (row, col) to alphanumeric "XY"
      */
     public static String toCoord(int row, int col) {
-        return "" + ('A' + row) + ('0' + col);
+        return Character.toString((char) ('A' + row)) + Character.toString((char) ('0' + col));
     }
 
     /**
@@ -81,13 +36,30 @@ class Player {
      * 'XY' where X is a char from 'A' to 'D' and Y is an char from '0' to '3'
      * Consider using toCoord to produce valid output.
      */
-    public static String chooseCoord(int[][] wall,
-                                     int[][] owall,
-                                     int brick) {
-        System.out.println(brick);
-        System.out.print("Coord: ");
-        String move = System.console().readLine();
-        return move;
+    public static String chooseCoord() {
+        Wall myWall = State.getMyWall();
+        int currDiscard = State.getCurrDiscard();
+
+        Wall[] walls = new Wall[16];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                walls[i * 4 + j] = new Wall(myWall, currDiscard, i, j);
+            }
+        }
+
+        double minScore = Double.MAX_VALUE;
+        int bestWallIdx = 0;
+        for (int i = 0; i < 16; i++) {
+            double score = walls[i].calcScore();
+            // System.out.print(walls[i]);
+            // System.out.println(score);
+            if (score < minScore) {
+                bestWallIdx = i;
+                minScore = score;
+            }
+        }
+
+        return toCoord(bestWallIdx / 4, bestWallIdx % 4);
     }
 
 
@@ -102,22 +74,23 @@ class Player {
         // Connect to a FoosGame with id from the command line
         Game game = new Game(args[0]);
 
-        init();
+        State.init();
 
         while (true) {
             // On our turn, we get the brick on the pile
             int discardBrick = game.getDiscard();
-
-            updateStack(game.wall, game.owall, discardBrick);
+            State.update(game.wall, game.owall, discardBrick);
+            State.print();
 
             // Choose 'p' to get the pile brick or 'd' to get a random brick
-            String pd_move = chooseMove(game.wall, game.owall, discardBrick);
+            String pd_move = chooseMove();
 
             // Get the brick we chose (either the pile brick or a random brick)
             int brick = game.getBrick(pd_move);
 
             // Determine where to place this brick with row-col coords "A0", "B3", etc
-            String co_move = chooseCoord(game.wall, game.owall, brick);
+            String co_move = chooseCoord();
+            System.out.println(co_move);
 
             // Make the move -- informs the opponent and updates the wall
             game.makeMove(co_move);
