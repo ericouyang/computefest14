@@ -1,5 +1,6 @@
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.Set;
 
 class Player {
@@ -58,8 +59,9 @@ class Player {
 
         System.out.format("\np: **  d: %d\n", discardBrick);
         System.out.print("Pile or Discard: ");
-        String s = System.console().readLine();
-        return s;
+
+        Scanner sc = new Scanner(System.in);
+        return sc.nextLine();
     }
 
     /**
