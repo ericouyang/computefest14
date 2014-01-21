@@ -37,7 +37,7 @@ class Player {
             }
         }
 
-        return maxChange > 0 ? "d" : "p";
+        return maxChange >= 0.05 ? "d" : "p";
     }
 
     /**
@@ -112,7 +112,6 @@ class Player {
         return maxChange > 0 ? toCoord(row, col) : "-1";
 
     }
-
 
     public static void main(String[] args) {
         if (args.length != 1) {
