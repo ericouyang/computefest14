@@ -91,7 +91,7 @@ class Game {
         String msg = recv();
         if (msg.equals("LOSE")) {
             System.out.println("***" + msg + "***");
-            System.exit(0);
+            System.exit(1);
         }
         int[] data = string2array(msg);
         owall = array2wall(data, 1);
