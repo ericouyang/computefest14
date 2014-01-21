@@ -5,6 +5,8 @@ import java.util.Set;
 
 class Player {
 
+    private static int discardRow, discardCol;
+
     /**
      * Choose the known brick in the discard or a unknown brick in the pile.
      * Input:
@@ -16,7 +18,26 @@ class Player {
      * 'p': Reject the known brick in the discard and draw from the pile.
      */
     public static String chooseMove() {
-        return "d";
+        Wall myWall = State.getMyWall();
+        int currDiscard = State.getCurrDiscard();
+
+        double maxChange = 0;
+        discardRow = -1;
+        discardCol = -1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                double oldScore = myWall.brickScore(i, j);
+                double newScore = Wall.brickScore(currDiscard, i, j);
+                double change = (oldScore - newScore) * 0.5 + (1 - newScore) * 0.5;
+                if (change > maxChange) {
+                    maxChange = change;
+                    discardRow = i;
+                    discardCol = j;
+                }
+            }
+        }
+
+        return maxChange >= 0.05 ? "d" : "p";
     }
 
     /**
@@ -36,14 +57,14 @@ class Player {
      * 'XY' where X is a char from 'A' to 'D' and Y is an char from '0' to '3'
      * Consider using toCoord to produce valid output.
      */
-    public static String chooseCoord() {
+    public static String chooseCoord(int brick) {
+        /*
         Wall myWall = State.getMyWall();
-        int currDiscard = State.getCurrDiscard();
 
         Wall[] walls = new Wall[16];
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                walls[i * 4 + j] = new Wall(myWall, currDiscard, i, j);
+                walls[i * 4 + j] = new Wall(myWall, brick, i, j);
             }
         }
 
@@ -59,7 +80,37 @@ class Player {
             }
         }
 
+        if (minScore > myWall.calcScore()) {
+            return "-1";
+        }
+
         return toCoord(bestWallIdx / 4, bestWallIdx % 4);
+        */
+
+        if (discardRow != -1) {
+            return toCoord(discardRow, discardCol);
+        }
+
+        Wall myWall = State.getMyWall();
+
+        double maxChange = 0;
+        int row = -1;
+        int col = -1;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                double oldScore = myWall.brickScore(i, j);
+                double newScore = Wall.brickScore(brick, i, j);
+                double change = (oldScore - newScore) * 0.5 + (1 - newScore) * 0.5;
+                if (change > maxChange) {
+                    maxChange = change;
+                    row = i;
+                    col = j;
+                }
+            }
+        }
+
+        return maxChange >= 0 ? toCoord(row, col) : "-1";
+
     }
 
 
@@ -84,12 +135,13 @@ class Player {
 
             // Choose 'p' to get the pile brick or 'd' to get a random brick
             String pd_move = chooseMove();
+            System.out.println(pd_move);
 
             // Get the brick we chose (either the pile brick or a random brick)
             int brick = game.getBrick(pd_move);
 
             // Determine where to place this brick with row-col coords "A0", "B3", etc
-            String co_move = chooseCoord();
+            String co_move = chooseCoord(brick);
             System.out.println(co_move);
 
             // Make the move -- informs the opponent and updates the wall

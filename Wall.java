@@ -2,12 +2,12 @@
  * Created by ericouyang on 1/21/14.
  */
 public class Wall {
-    public int[][] referenceWall =
+    public static final int[][] REFERENCE_WALL =
         {
-            {97, 87, 71, 50},
+            {99, 87, 71, 50},
             {87, 71, 50, 28},
             {71, 50, 28, 12},
-            {50, 28, 12,  2}
+            {50, 28, 12,  0}
         };
 
     private int[][] bricks;
@@ -52,7 +52,11 @@ public class Wall {
     }
 
     public double brickScore(int i, int j) {
-        return Math.abs(bricks[i][j] - referenceWall[i][j]) / 100.0;
+        return brickScore(bricks[i][j], i, j);
+    }
+
+    public static double brickScore(int brick, int i, int j) {
+        return Math.abs(brick - REFERENCE_WALL[i][j]) / 100.0;
     }
 
     /**
