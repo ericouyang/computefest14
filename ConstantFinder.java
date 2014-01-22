@@ -27,10 +27,10 @@ public class ConstantFinder {
                 {
                     try
                     {
-                        ProcessBuilder pb1 = new ProcessBuilder(String.format("java BatchPlayer 250 java Player asdf1234 %.2f %.2f %.2f", c1, c2, c3).split(" "));
+                        ProcessBuilder pb1 = new ProcessBuilder(String.format("java BatchPlayer 50 java Player asdf1234 %.2f %.2f %.2f", c1, c2, c3).split(" "));
                         Process p1 = pb1.start();
 
-                        ProcessBuilder pb2 = new ProcessBuilder("java BatchPlayer 250 java StrictPlayer asdf1234".split(" "));
+                        ProcessBuilder pb2 = new ProcessBuilder("java BatchPlayer 50 java StrictPlayer asdf1234".split(" "));
                         Process p2 = pb2.start();
 
                         BufferedReader reader = new BufferedReader(new InputStreamReader(p1.getInputStream()));
