@@ -54,6 +54,7 @@ public class BatchPlayer {
         System.out.println("Wins: " + numWins);
         System.out.println("Losses: " + numLosses);
         System.out.println("% Wins: " + (numWins * 100.0 / (numWins + numLosses)) + "%");
+        System.out.println("*" + (numWins * 100.0 / (numWins + numLosses)));
     }
 
     private static String join(String[] s) {

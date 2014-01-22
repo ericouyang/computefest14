@@ -89,10 +89,10 @@ public class State {
     public static void print() {
         System.out.println("\nOpponent:");
         System.out.println(oppWall);
-        System.out.println("\nScore: " + oppWall.calcScore());
+        //System.out.println("\nScore: " + oppWall.calcScore());
         System.out.println("\nMy Wall:");
         System.out.println(myWall);
-        System.out.println("\nScore: " + myWall.calcScore());
+        //System.out.println("\nScore: " + myWall.calcScore());
         System.out.println("  Pair Score: " + myWall.pairScore);
         System.out.println("  Offset Score: " + myWall.offsetScore);
         System.out.println("  Spacing Score: " + myWall.spacingScore);

@@ -68,7 +68,7 @@ class Game {
 
     Game(String game_id) {
         try {
-            comm = new Socket("crisco.seas.harvard.edu", 8080);
+            comm = new Socket("localhost", 8080);
             //comm = new Socket("localhost", 8080);
             out = new DataOutputStream(comm.getOutputStream());
             in = new DataInputStream(comm.getInputStream());

@@ -7,6 +7,8 @@ class Player {
 
     private static int discardRow, discardCol;
 
+    private static double c1, c2, c3;
+
     /**
      * Choose the known brick in the discard or a unknown brick in the pile.
      * Input:
@@ -128,7 +130,7 @@ class Player {
         double minScore = Double.MAX_VALUE;
         int bestWallIdx = 0;
         for (int i = 0; i < 16; i++) {
-            double score = walls[i].calcScore();
+            double score = walls[i].calcScore(c1, c2, c3);
             if (score < minScore) {
                 bestWallIdx = i;
                 minScore = score;
@@ -139,7 +141,9 @@ class Player {
             }
         }
 
-        if (minScore > wall.calcScore() || (threshold && wall.calcScore() - minScore < 0.05)) {
+        double currScore = wall.calcScore(c1, c2, c3);
+
+        if (minScore > currScore || (threshold && currScore - minScore < 0.05)) {
             return -1;
         }
 
@@ -147,12 +151,16 @@ class Player {
     }
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args.length < 1) {
             System.out.println("Usage: java Player GAMEID");
             System.out.println("\tGAMEID = 0     creates a new game");
             System.out.println("\tGAMEID = WXYZ  connect to a specific game");
             return;
         }
+
+        c1 = Double.parseDouble(args[1]);
+        c2 = Double.parseDouble(args[2]);
+        c3 = Double.parseDouble(args[3]);
 
         // Connect to a FoosGame with id from the command line
         Game game = new Game(args[0]);

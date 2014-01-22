@@ -47,7 +47,7 @@ public class Wall {
         return bricks;
     }
 
-    public double calcScore() {
+    public double calcScore(double pairConst, double offsetConst, double spacingConst) {
         pairScore = 0;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
@@ -75,7 +75,7 @@ public class Wall {
             }
         }
 
-        return pairScore + offsetScore * 0.4 + spacingScore * 0.1;
+        return pairScore * pairConst + offsetScore * offsetConst + spacingScore * spacingConst;
     }
 
     public double pairScore(int i1, int j1, int i2, int j2)
