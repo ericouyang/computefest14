@@ -156,21 +156,44 @@ public class RelaxedCautiousPlayer {
         double spacing = 0;
 
         int rowStart = -1;
-        for (int row = coord.row; row >= 0; row--) {
+        for (int row = coord.row - 1; row >= 0; row--) {
             if (bricks[row][coord.col] > brick) {
                 rowStart = row;
                 break;
             }
         }
         int rowEnd = 4;
-        for (int row = coord.row; row < 4; row++) {
+        for (int row = coord.row + 1; row < 4; row++) {
             if (bricks[row][coord.col] < brick) {
-                rowEnd = row ;
+                rowEnd = row;
             }
         }
-        double idealRowSpacing = ((rowStart == -1 ? REFERENCE[0 + coord.col] : bricks[rowStart][coord.col]) - (rowEnd == 4 ? REFERENCE[3 + coord.col] : bricks[rowEnd][coord.col])) / (rowStart - rowEnd);
+        double rowStartBrick = (rowStart == -1 ? REFERENCE[++rowStart + coord.col] : bricks[rowStart][coord.col]);
+        double rowEndBrick = (rowEnd == 4 ? REFERENCE[--rowEnd + coord.col] : bricks[rowEnd][coord.col]);
+        double idealRowSpacing = (rowStartBrick - rowEndBrick) / (rowEnd - rowStart);
+        spacing += Math.abs((coord.row - rowStart) * idealRowSpacing - (rowStartBrick - brick));
+        spacing += Math.abs((rowEnd - coord.row) * idealRowSpacing - (brick - rowEndBrick));
 
-        return 0;
+        int colStart = -1;
+        for (int col = coord.col - 1; col >= 0; col--) {
+            if (bricks[coord.row][col] > brick) {
+                colStart = col;
+                break;
+            }
+        }
+        int colEnd = 4;
+        for (int col = coord.col + 1; col < 4; col++) {
+            if (bricks[coord.row][col] < brick) {
+                colEnd = col;
+            }
+        }
+        double colStartBrick = (colStart == -1 ? REFERENCE[++colStart + coord.col] : bricks[colStart][coord.col]);
+        double colEndBrick = (colEnd == 4 ? REFERENCE[--colEnd + coord.col] : bricks[colEnd][coord.col]);
+        double idealColSpacing = (colStartBrick - colEndBrick) / (colEnd - colStart);
+        spacing += Math.abs((coord.row - colStart) * idealColSpacing - (colStartBrick - brick));
+        spacing += Math.abs((colEnd - coord.row) * idealColSpacing - (brick - colEndBrick));
+
+        return spacing;
     }
 
     public static void main(String[] args) {
