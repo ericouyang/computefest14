@@ -88,10 +88,12 @@ class Game {
     }
 
     public int getDiscard() {
+        System.out.println("Getting discard");
         String msg = recv();
+        System.out.println("Got discard");
         if (msg.equals("LOSE")) {
             System.out.println("***" + msg + "***");
-            System.exit(1);
+            System.exit(0);
         }
         int[] data = string2array(msg);
         owall = array2wall(data, 1);
@@ -104,13 +106,16 @@ class Game {
     }
 
     public void makeMove(String move) {
+        System.out.println("Sending Move");
         send(move);
+        System.out.println("Sent Move");
         String msg = recv();
         if (msg.equals("WIN")) {
             System.out.println("***" + msg + "***");
             System.exit(0);
         }
         wall = array2wall(string2array(msg), 0);
+        System.out.println("Received Wall");
     }
 
 }
