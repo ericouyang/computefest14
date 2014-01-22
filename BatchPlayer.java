@@ -25,19 +25,23 @@ public class BatchPlayer {
                     // System.out.println(line);
                     if (line.equals("***WIN***")) {
                         numWins++;
-                        System.out.println("Win");
+                        System.out.print("Win");
                         ended = true;
                         break;
                     } else if (line.equals("***LOSE***")) {
                         numLosses++;
-                        System.out.println("Loss");
+                        System.out.print("Loss");
                         ended = true;
                         break;
                     }
                 }
                 if (!ended) {
-                    System.out.println("Error");
+                    System.out.print("Error");
                 }
+
+                System.out.print("; Wins: " + numWins);
+                System.out.print("; Losses: " + numLosses);
+                System.out.println("; % Wins: " + (numWins * 100.0 / (numWins + numLosses)) + "%");
 
                 p.destroy();
             } catch (Exception e) {
@@ -45,7 +49,7 @@ public class BatchPlayer {
                 return;
             }
         }
-
+        System.out.println("Total Successful Trials: " + (numWins + numLosses));
         System.out.println("Wins: " + numWins);
         System.out.println("Losses: " + numLosses);
         System.out.println("% Wins: " + (numWins * 100.0 / (numWins + numLosses)) + "%");
