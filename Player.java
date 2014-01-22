@@ -27,12 +27,16 @@ class Player {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 double oldScore = myWall.brickScore(i, j);
-                double newScore = Wall.brickScore(currDiscard, i, j);
-                double change = (oldScore - newScore) * 0.5 + (1 - newScore) * 0.5;
-                if (change > maxChange) {
-                    maxChange = change;
-                    discardRow = i;
-                    discardCol = j;
+                double newScore = myWall.calcBrickScoreWithValue(currDiscard, i, j);
+                if (oldScore > newScore)
+                {
+                    double change = oldScore - newScore;
+                    if (change > maxChange)
+                    {
+                        maxChange = change;
+                        discardRow = i;
+                        discardCol = j;
+                    }
                 }
             }
         }
@@ -99,12 +103,16 @@ class Player {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 double oldScore = myWall.brickScore(i, j);
-                double newScore = Wall.brickScore(brick, i, j);
-                double change = (oldScore - newScore) * 0.5 + (1 - newScore) * 0.5;
-                if (change > maxChange) {
-                    maxChange = change;
-                    row = i;
-                    col = j;
+                double newScore = myWall.calcBrickScoreWithValue(brick, i, j);
+                if (oldScore > newScore)
+                {
+                    double change = oldScore - newScore;
+                    if (change > maxChange)
+                    {
+                        maxChange = change;
+                        row = i;
+                        col = j;
+                    }
                 }
             }
         }

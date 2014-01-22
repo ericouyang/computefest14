@@ -4,10 +4,10 @@
 public class Wall {
     public static final int[][] REFERENCE_WALL =
         {
-            {99, 87, 71, 50},
+            {97, 87, 71, 50},
             {87, 71, 50, 28},
             {71, 50, 28, 12},
-            {50, 28, 12,  0}
+            {50, 28, 12,  2}
         };
 
     private int[][] bricks;
@@ -52,11 +52,42 @@ public class Wall {
     }
 
     public double brickScore(int i, int j) {
-        return brickScore(bricks[i][j], i, j);
+        return calcBrickScoreWithValue(bricks[i][j], i, j);
     }
 
-    public static double brickScore(int brick, int i, int j) {
-        return Math.abs(brick - REFERENCE_WALL[i][j]) / 100.0;
+    public double calcBrickScoreWithValue(int brick, int i, int j) {
+        double offset = Math.abs(brick - REFERENCE_WALL[i][j]) / 100.0;
+
+        double incorrectness = 0;
+        int numAdjacent = 0;
+
+        if (i + 1 <= 3)
+        {
+            numAdjacent++;
+            if (bricks[i + 1][j] > brick)
+                incorrectness += bricks[i + 1][j] - brick;
+        }
+        if (j + 1 <= 3)
+        {
+            numAdjacent++;
+            if (bricks[i][j + 1] > brick)
+                incorrectness += bricks[i][j + 1] - brick;
+        }
+        if (i - 1 >= 0)
+        {
+            numAdjacent++;
+            if (bricks[i - 1][j] < brick)
+                incorrectness += brick - bricks[i - 1][j];
+        }
+        if (j - 1 >= 0)
+        {
+            numAdjacent++;
+            if (bricks[i][j - 1] < brick)
+                incorrectness +=  brick - bricks[i][j - 1];
+        }
+        incorrectness /= numAdjacent * 100;
+
+        return offset * 0.6 + incorrectness * 0.4;
     }
 
     /**
