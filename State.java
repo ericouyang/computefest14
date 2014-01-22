@@ -93,6 +93,9 @@ public class State {
         System.out.println("\nMy Wall:");
         System.out.println(myWall);
         System.out.println("\nScore: " + myWall.calcScore());
+        System.out.println("  Pair Score: " + myWall.pairScore);
+        System.out.println("  Offset Score: " + myWall.offsetScore);
+        System.out.println("  Spacing Score: " + myWall.spacingScore);
         System.out.format("\np: **  d: %d\n", currDiscard);
     }
 

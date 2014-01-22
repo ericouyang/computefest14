@@ -2,19 +2,25 @@
  * Created by ericouyang on 1/21/14.
  */
 public class Wall {
-    public static final int[][] REFERENCE_WALL =
+    private static final int[][] REFERENCE_WALL =
         {
-            {97, 87, 71, 50},
+            {99, 87, 71, 50},
             {87, 71, 50, 28},
             {71, 50, 28, 12},
-            {50, 28, 12,  2}
+            {50, 28, 12,  0}
         };
+
+    private static final double[] REFERENCE = {99, 87, 71, 49.5, 28, 12, 0};
 
     private int[][] bricks;
     private int width;
     private int height;
     private int numBricks;
     private int numPairs;
+
+    public double pairScore;
+    public double offsetScore;
+    public double spacingScore;
 
     public Wall(int[][] b) {
         height = b.length;
@@ -42,7 +48,7 @@ public class Wall {
     }
 
     public double calcScore() {
-        double pairScore = 0;
+        pairScore = 0;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 3; j++) {
                 pairScore += pairScore(i, j, i, j + 1) / numPairs;
@@ -55,14 +61,21 @@ public class Wall {
             }
         }
 
-        double offsetScore = 0;
+        offsetScore = 0;
         for (int j = 0; j < 4; j++) {
             for (int i = 0; i < 4; i++) {
                 offsetScore += brickOffset(i, j);
             }
         }
 
-        return pairScore * 0.7 + offsetScore * 0.3;
+        spacingScore = 0;
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < 4; i++) {
+                spacingScore += spacingScore(i, j);
+            }
+        }
+
+        return pairScore + offsetScore * 0.4 + spacingScore * 0.1;
     }
 
     public double pairScore(int i1, int j1, int i2, int j2)
@@ -86,6 +99,52 @@ public class Wall {
         }
 
         return score;
+    }
+
+    public double spacingScore(int i, int j) {
+        int brick = bricks[i][j];
+
+        double spacing = 0;
+
+        int rowStart = -1;
+        for (int row = i - 1; row >= 0; row--) {
+            if (bricks[row][j] > brick) {
+                rowStart = row;
+                break;
+            }
+        }
+        int rowEnd = 4;
+        for (int row = i + 1; row < 4; row++) {
+            if (bricks[row][j] < brick) {
+                rowEnd = row;
+            }
+        }
+        double rowStartBrick = (rowStart == -1 ? REFERENCE[++rowStart + j] : bricks[rowStart][j]);
+        double rowEndBrick = (rowEnd == 4 ? REFERENCE[--rowEnd + j] : bricks[rowEnd][j]);
+        double idealRowSpacing = (rowStartBrick - rowEndBrick) / (rowEnd - rowStart);
+        spacing += Math.abs((i - rowStart) * idealRowSpacing - (rowStartBrick - brick));
+        spacing += Math.abs((rowEnd - i) * idealRowSpacing - (brick - rowEndBrick));
+
+        int colStart = -1;
+        for (int col = j - 1; col >= 0; col--) {
+            if (bricks[i][col] > brick) {
+                colStart = col;
+                break;
+            }
+        }
+        int colEnd = 4;
+        for (int col = j + 1; col < 4; col++) {
+            if (bricks[i][col] < brick) {
+                colEnd = col;
+            }
+        }
+        double colStartBrick = (colStart == -1 ? REFERENCE[++colStart + j] : bricks[colStart][j]);
+        double colEndBrick = (colEnd == 4 ? REFERENCE[--colEnd + j] : bricks[colEnd][j]);
+        double idealColSpacing = (colStartBrick - colEndBrick) / (colEnd - colStart);
+        spacing += Math.abs((i - colStart) * idealColSpacing - (colStartBrick - brick));
+        spacing += Math.abs((colEnd - i) * idealColSpacing - (brick - colEndBrick));
+
+        return spacing / 200;
     }
 
     public double brickOffset(int i, int j)
@@ -136,6 +195,8 @@ public class Wall {
      * Pretty print a game wall
      */
     public String toString() {
+        return "";
+        /*
         StringBuilder s = new StringBuilder(260);
 
         s.append("  ||");
@@ -163,5 +224,6 @@ public class Wall {
         s.append("|\n" + new String(new char[4 + 5 * bricks[0].length + 1]).replace("\0", "=") + "\n");
 
         return s.toString();
+        */
     }
 }
