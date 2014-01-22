@@ -14,11 +14,13 @@ public class Wall {
     private int width;
     private int height;
     private int numBricks;
+    private int numPairs;
 
     public Wall(int[][] b) {
         height = b.length;
         width = b[0].length;
         numBricks = width * height;
+        numPairs = 2 * (width - 1) * height;
 
         bricks = new int[height][width];
         for (int i = 0; i < height; i++) {
@@ -40,15 +42,55 @@ public class Wall {
     }
 
     public double calcScore() {
-        double score = 0;
-
-        for (int i = bricks.length - 1; i > 0; --i) {
-            for (int j = 0, cols = bricks[i].length; j < cols; ++j) {
-                score += brickScore(i, j) / numBricks;
+        double pairScore = 0;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 3; j++) {
+                pairScore += pairScore(i, j, i, j + 1) / numPairs;
             }
         }
 
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < 3; i++) {
+                pairScore += pairScore(i, j, i + 1, j) / numPairs;
+            }
+        }
+
+        double offsetScore = 0;
+        for (int j = 0; j < 4; j++) {
+            for (int i = 0; i < 4; i++) {
+                offsetScore += brickOffset(i, j);
+            }
+        }
+
+        return pairScore * 0.7 + offsetScore * 0.3;
+    }
+
+    public double pairScore(int i1, int j1, int i2, int j2)
+    {
+        double score = 0;
+        if (j1 == j2 && i1 < i2)
+        {
+            score = Math.max(bricks[i2][j2] - bricks[i1][j1], 0);
+        }
+        else if (j1 == j2 && i1 > i2)
+        {
+            score = Math.max(bricks[i1][j1] - bricks[i2][j2], 0);
+        }
+        else if (i1 == i2 && j1 < j2)
+        {
+            score = Math.max(bricks[i2][j2] - bricks[i1][j1], 0);
+        }
+        else if (i1 == i2 && j1 > j2)
+        {
+            score = Math.max(bricks[i1][j1] - bricks[i2][j2], 0);
+        }
+
         return score;
+    }
+
+    public double brickOffset(int i, int j)
+    {
+        return Math.abs(bricks[i][j] - REFERENCE_WALL[i][j]) / 100.0;
     }
 
     public double brickScore(int i, int j) {

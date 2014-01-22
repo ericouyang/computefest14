@@ -18,6 +18,14 @@ class Player {
      * 'p': Reject the known brick in the discard and draw from the pile.
      */
     public static String chooseMove() {
+        int move = bestMove(State.getMyWall(), State.getCurrDiscard(), true);
+
+        discardRow = move / 4;
+        discardCol = move % 4;
+
+        return move >= 0 ? "d" : "p";
+
+        /*
         Wall myWall = State.getMyWall();
         int currDiscard = State.getCurrDiscard();
 
@@ -42,6 +50,7 @@ class Player {
         }
 
         return maxChange >= 0.05 ? "d" : "p";
+        */
     }
 
     /**
@@ -62,35 +71,21 @@ class Player {
      * Consider using toCoord to produce valid output.
      */
     public static String chooseCoord(int brick) {
+
+        int i = discardRow;
+        int j = discardCol;
+
+        if (brick != State.getCurrDiscard())
+        {
+            int move = bestMove(State.getMyWall(), brick, false);
+
+            i = move / 4;
+            j = move % 4;
+        }
+
+        return toCoord(i, j);
+
         /*
-        Wall myWall = State.getMyWall();
-
-        Wall[] walls = new Wall[16];
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                walls[i * 4 + j] = new Wall(myWall, brick, i, j);
-            }
-        }
-
-        double minScore = Double.MAX_VALUE;
-        int bestWallIdx = 0;
-        for (int i = 0; i < 16; i++) {
-            double score = walls[i].calcScore();
-            // System.out.print(walls[i]);
-            // System.out.println(score);
-            if (score < minScore) {
-                bestWallIdx = i;
-                minScore = score;
-            }
-        }
-
-        if (minScore > myWall.calcScore()) {
-            return "-1";
-        }
-
-        return toCoord(bestWallIdx / 4, bestWallIdx % 4);
-        */
-
         if (discardRow != -1) {
             return toCoord(discardRow, discardCol);
         }
@@ -118,7 +113,37 @@ class Player {
         }
 
         return maxChange > 0 ? toCoord(row, col) : "-1";
+        */
+    }
 
+    public static int bestMove(Wall wall, int brick, boolean threshold)
+    {
+        Wall[] walls = new Wall[16];
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                walls[i * 4 + j] = new Wall(wall, brick, i, j);
+            }
+        }
+
+        double minScore = Double.MAX_VALUE;
+        int bestWallIdx = 0;
+        for (int i = 0; i < 16; i++) {
+            double score = walls[i].calcScore();
+            if (score < minScore) {
+                bestWallIdx = i;
+                minScore = score;
+                if (score == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        if (minScore > wall.calcScore() || (threshold && wall.calcScore() - minScore < 0.05)) {
+            return -1;
+        }
+
+        return bestWallIdx;
     }
 
     public static void main(String[] args) {
