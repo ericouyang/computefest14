@@ -6,7 +6,7 @@ public class BatchPlayer {
 
     public static void main(String[] args) {
         int numTrials = Integer.parseInt(args[0]);
-        String[] cmd = Arrays.copyOfRange(args, 1, args.length - 1);
+        String[] cmd = Arrays.copyOfRange(args, 1, args.length);
 
         System.out.println("Running process " + cmd[1]);
         int numWins = 0;
