@@ -6,7 +6,7 @@ import java.util.List;
  */
 public class RelaxedCautiousPlayerVar {
 
-    private static final int[][] RANGES = {{94, 99}, {81, 93}, {62, 80}, {38, 61}, {19, 37}, { 6, 18}, { 0,  5}};
+    private static final int[][] RANGES = {{86, 99}, {72, 93}, {58, 80}, {38, 61}, {19, 41}, {6, 27}, {0, 13}};
     private static final int RANGE_MIN = 0;
     private static final int RANGE_MAX = 1;
 
@@ -208,8 +208,12 @@ public class RelaxedCautiousPlayerVar {
         int deviation = Integer.parseInt(args[1]);
         for (int i = 0; i < RANGES.length; i++) {
             int[] range = RANGES[i];
-            range[RANGE_MIN] = Math.max(0, range[RANGE_MIN] - deviation);
-            range[RANGE_MAX] = Math.min(99, range[RANGE_MAX] + deviation);
+            if (range[RANGE_MIN] != 0) {
+                range[RANGE_MIN] = range[RANGE_MIN] + deviation;
+            }
+            if (range[RANGE_MAX] != 99) {
+                range[RANGE_MAX] = range[RANGE_MAX] - deviation;
+            }
         }
 
         State.init();
